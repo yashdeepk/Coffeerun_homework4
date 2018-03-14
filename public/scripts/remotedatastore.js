@@ -21,17 +21,24 @@
     });
   };
   RemoteDataStore.prototype.get = function (key, cb) {
-    $.get(this.serverUrl + "/" + key, function (serverResponse) {
+    $.get(this.serverUrl + "?emailAddress=" + key, function (serverResponse) {
       console.log(serverResponse);
       cb(serverResponse);
     });
   };
   RemoteDataStore.prototype.remove = function (key) {
-    $.ajax(this.serverUrl + "/" + key, {
-      type: "DELETE"
-    });
+    var serverUrl = this.serverUrl;
 
+    this.get(key, function(serverResponse){
+      if (serverResponse.length !=0){
+        var removeds = serverResponse[0]["id"];
+        $.ajax(serverUrl + "/" + removeds, {
+          type: "DELETE"
+        });
+      }
+    });
   };
+
   App.RemoteDataStore = RemoteDataStore;
   window.App = App;
 })(window);
